@@ -108,7 +108,6 @@
         {
             "type": "tun",
             "tag": "tun-in",
-            "interface_name": "tun0",
             "address": [
                 "172.18.0.1\/24"
             ],
