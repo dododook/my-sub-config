@@ -1,157 +1,142 @@
+# Author: https://github.com/Repcz
+# 适配版 - 供 Cloudflare Worker 转换器使用
+# 最后更新时间: 2026-4-27 17:40
+
+# ---------------------------------------------------
 # 基础设置
-port: 0
-socks-port: 0
-redir-port: 0
-mixed-port: 7890
+# ---------------------------------------------------
+mixed-port: 7893
+tcp-concurrent: true
 allow-lan: true
-bind-address: '*'
-mode: rule
-log-level: info
 ipv6: false
-external-controller: 127.0.0.1:9090
+log-level: info
+unified-delay: true
+geodata-mode: true
 
-# ---------------------------------------------------
-# 锚点定义
-# ---------------------------------------------------
-pr:
-  &a3
-  type: select
-  proxies: [♻️ 自动选择, 🚀 手动切换, ⚡️ 专线节点, 📺 媒体节点, 🇭🇰 香港节点, 🇨🇳 台湾节点, 🇺🇸 美国节点, 🇺🇸 美国AN, 🇯🇵 日本节点, 🇪🇺 其他节点, 🚀 搬瓦工点, DIRECT]
-  interval: 300
-
-oa:
-  &a8
-  type: select
-  proxies: [🇨🇳 台湾节点, 🇺🇸 美国节点, 🇺🇸 美国AN, 🇯🇵 日本节点, 🚀 搬瓦工点]
-  interval: 300
-
-re: &a10
-  type: select
-  proxies: [REJECT]
-  interval: 300
-
-auto: &a4
-  type: url-test
-  url: http://cp.cloudflare.com
-  interval: 300
-  timeout: 3
-  proxies:
-__ALL_PROXIES_NAMES__
-
-use: &a2
-  type: select
-  proxies:
-__ALL_PROXIES_NAMES__
-
-# 这里统一改为 classical，以兼容 IP 和 域名
-c: &a6 { type: http, behavior: classical, interval: 86400 }
-
-# ---------------------------------------------------
-# 资源链接 (优化为高速源)
-# ---------------------------------------------------
+# 资源下载加速
 geox-url:
-  geoip: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat'
-  geosite: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat'
-  mmdb: 'https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb'
-  asn: 'https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb'
+  geoip: "https://git.repcz.link/raw.githubusercontent.com/Loyalsoldier/geoip/release/geoip.dat"
+  geosite: "https://git.repcz.link/github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://git.repcz.link/raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb"
+  asn: "https://git.repcz.link/raw.githubusercontent.com/Loyalsoldier/geoip/release/GeoLite2-ASN.mmdb"
+
+profile: { store-selected: true, store-fake-ip: false }
+sniffer: { enable: true, sniff: { HTTP: { ports: [80], override-destination: true }, TLS: { ports: [443, 8443] }, QUIC: { ports: [443, 8443] } } }
+
+tun:
+  enable: true
+  stack: mixed
+  dns-hijack: [any:53]
+        
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  listen: :1053
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter: ['+.lan', '*', '+.local', '+.cmpassport.com', 'id6.me', 'open.e.189.cn', 'mdn.open.wo.cn', 'opencloud.wostore.cn', 'auth.wosms.cn', '+.10099.com.cn', '+.msftconnecttest.com', '+.msftncsi.com', 'lancache.steamcontent.com']
+  nameserver: [223.5.5.5, 119.29.29.29]
+__DNS_POLICY__
 
 # ---------------------------------------------------
 # 节点注入
 # ---------------------------------------------------
 proxies:
-  - name: DIRECT
-    type: direct
 __PROXIES__
+
+# ---------------------------------------------------
+# 锚点定义
+# ---------------------------------------------------
+pg: &pg {type: select, proxies: [手动切换, 香港节点, 美国节点, 狮城节点, 日本节点, 台湾节点, DIRECT]}
+url-test: &url-test {type: url-test, url: http://1.1.1.1/generate_204, interval: 300, tolerance: 0, include-all: true}
+c: &c {type: http, behavior: classical, format: text, interval: 86400}
 
 # ---------------------------------------------------
 # 策略组
 # ---------------------------------------------------
 proxy-groups:
-  - { name: 🚀 手动切换, <<: *a2 }
-  - { name: 🆎 AdBlock, <<: *a10 }
-  - { name: 🍎 苹果服务, <<: *a3 }
-  - { name: 💬 OpenAI, <<: *a8 }
-  - { name: 🤖 Cloudflare, <<: *a3 }
-  - { name: 🌌 谷歌服务, <<: *a3 }
-  - { name: Ⓜ️ 微软服务, <<: *a3 }
-  - { name: 👨🏻💻 GitHub, <<: *a3 }
-  - { name: 📟 国外社交, <<: *a3 }
-  - { name: 🎥 国外视频, <<: *a3 }
-  - { name: 🐟 漏网之鱼, <<: *a3 }
-
-  - { name: ♻️ 自动选择, <<: *a4 }
-  - { name: ⚡️ 专线节点, <<: *a4, filter: '专线' }
-  - { name: 📺 媒体节点, <<: *a4, filter: '\[M\]' }
-  - { name: 🚀 搬瓦工点, <<: *a4, filter: 'JMS' }
-  - { name: 🇭🇰 香港节点, <<: *a4, filter: '🇭🇰|HK|香港' }
-  - { name: 🇨🇳 台湾节点, <<: *a4, filter: '🇨🇳|TW|台湾' }
-  - { name: 🇺🇸 美国节点, <<: *a4, filter: '🇺🇸|US|美国' }
-  - { name: 🇺🇸 美国AN, <<: *a4, filter: '(?:🇺🇸|US|美国).*AN' }
-  - { name: 🇯🇵 日本节点, <<: *a4, filter: '🇯🇵|JP|日本' }
-  - { name: 🇪🇺 其他节点, <<: *a4, filter: '🇫🇷|FR|法国|🇩🇪|DE|德国|🇬🇧|UK|英国|🇸🇬|SG|新加' }
+  - {name: 手动切换, type: select, include-all: true, proxies: [香港节点, 美国节点, 狮城节点, 日本节点, 台湾节点, DIRECT], icon: https://github.com/shindgewongxj/WHATSINStash/raw/main/icon/applesafari.png}
+  - {name: 国外网站, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Global.png}
+  - {name: 国际媒体, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/YouTube.png}
+  - {name: 苹果服务, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple_1.png}
+  - {name: 微软服务, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Microsoft.png}
+  - {name: 谷歌服务, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Google_Search.png}
+  - {name: 电报消息, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram.png}
+  - {name: 推特消息, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Twitter.png}
+  - {name: AI, <<: *pg, icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/OpenAI.png}
+  - {name: 游戏平台, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Game.png}
+  - {name: Emby, <<: *pg, include-all: true, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Emby.png}
+  - {name: Spotify, <<: *pg, include-all: true, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Spotify.png}
+  - {name: 兜底分流, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png}
+  
+  # 自动选择组
+  - {name: 香港节点, <<: *url-test, filter: "(?i)🇭🇰|香港|(\b(HK|Hong)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png}
+  - {name: 美国节点, <<: *url-test, filter: "(?i)🇺🇸|美国|洛杉矶|圣何塞|(\b(US|United States)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png}
+  - {name: 狮城节点, <<: *url-test, filter: "(?i)🇸🇬|新加坡|狮|(\b(SG|Singapore)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png}
+  - {name: 日本节点, <<: *url-test, filter: "(?i)🇯🇵|日本|东京|(\b(JP|Japan)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png}
+  - {name: 台湾节点, <<: *url-test, filter: "(?i)🇨🇳|🇹🇼|台湾|(\b(TW|Tai|Taiwan)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/China.png}
 
 # ---------------------------------------------------
-# 规则提供者 (修复 behavior)
+# 规则提供者
 # ---------------------------------------------------
 rule-providers:
-  Download: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Download/Download.yaml, path: ./rule/Download.yaml }
-  Direct: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Direct/Direct.yaml, path: ./rule/Direct.yaml }
-  Advertising: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/AdvertisingLite/AdvertisingLite.yaml, path: ./rule/AdvertisingLite.yaml }
-  OpenAI: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/OpenAI/OpenAI.yaml, path: ./rule/OpenAI.yaml }
-  BingAI: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Bing/Bing.yaml, path: ./rule/BingAI.yaml }
-  BardAI: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/BardAI/BardAI.yaml, path: ./rule/BardAI.yaml }
-  Gemini: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Gemini/Gemini.yaml, path: ./rule/Gemini.yaml }
-  Apple: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Apple/Apple.yaml, path: ./rule/Apple.yaml }
-  Cloudflare: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Cloudflare/Cloudflare.yaml, path: ./rule/Cloudflare.yaml }
-  Discord: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Discord/Discord.yaml, path: ./rule/Discord.yaml }
-  Github: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/GitHub/GitHub.yaml, path: ./rule/Github.yaml }
-  Microsoft: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Microsoft/Microsoft.yaml, path: ./rule/Microsoft.yaml }
-  Google: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Google/Google.yaml, path: ./rule/Google.yaml }
-  Telegram: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Telegram/Telegram.yaml, path: ./rule/Telegram.yaml }
-  Twitter: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Twitter/Twitter.yaml, path: ./rule/Twitter.yaml }
-  Instagram: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Instagram/Instagram.yaml, path: ./rule/Instagram.yaml }
-  YouTube: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/YouTube/YouTube.yaml, path: ./rule/YouTube.yaml }
-  Netflix: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Netflix/Netflix.yaml, path: ./rule/Netflix.yaml }
-  TencentVideo: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/TencentVideo/TencentVideo.yaml, path: ./rule/TencentVideo.yaml }
-  ByteDance: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/ByteDance/ByteDance.yaml, path: ./rule/ByteDance.yaml }
-  Lan: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Lan/Lan.yaml, path: ./rule/Lan.yaml }
-  Proxy: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/Proxy/Proxy.yaml, path: ./rule/Proxy.yaml }
-  China: { <<: *a6, url: https://fastly.jsdelivr.net/gh/blackmatrix7/ios_rule_script@master/rule/Clash/China/China.yaml, path: ./rule/China.yaml }
+  Direct: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Direct.list}
+  Lan: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Lan.list}
+  Reject: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Reject.list}
+  AppleCN: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/AppleCN.list}
+  AppleProxy: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/AppleServers.list}
+  Microsoft: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Microsoft.list}
+  OneDrive: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/OneDrive.list}
+  Github: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Github.list}
+  YouTube: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/YouTube.list}
+  Google: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Google.list}
+  Telegram: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Telegram.list}
+  Twitter: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Twitter.list}
+  Steam: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Steam.list}
+  Epic: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Epic.list}
+  AI: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/AI.list}
+  Emby: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Emby.list}
+  Spotify: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Spotify.list}
+  Bahamut: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Bahamut.list}
+  Netflix: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Netflix.list}
+  Disney: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Disney.list}
+  PrimeVideo: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/PrimeVideo.list}
+  HBO: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/HBO.list}
+  TikTok: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/TikTok.list}
+  Proxy: {<<: *c, url: https://github.com/Repcz/Tool/raw/X/mihomo/Rules/Proxy.list}
 
 # ---------------------------------------------------
-# 路由规则 (添加直连保障)
+# 路由规则
 # ---------------------------------------------------
 rules:
-  # 必须将资源下载域名设为直连，防止死循环
-  - DOMAIN-SUFFIX,jsdelivr.net,DIRECT
-  - DOMAIN-SUFFIX,raw.githubusercontent.com,DIRECT
+  # 解决规则下载死锁
+  - DOMAIN-SUFFIX,github.com,DIRECT
+  - DOMAIN-SUFFIX,githubusercontent.com,DIRECT
+  - DOMAIN-SUFFIX,repcz.link,DIRECT
   
-  - IP-CIDR,116.172.96.0/8,DIRECT
-  - IP-CIDR,121.37.69.0/8,DIRECT
-
-  - RULE-SET,Download,DIRECT
   - RULE-SET,Direct,DIRECT
+  - RULE-SET,Reject,REJECT
+  - RULE-SET,AI,AI
+  - RULE-SET,Github,微软服务
+  - RULE-SET,OneDrive,微软服务
+  - RULE-SET,Microsoft,微软服务
+  - RULE-SET,YouTube,谷歌服务
+  - RULE-SET,Google,谷歌服务
+  - RULE-SET,Twitter,推特消息
+  - RULE-SET,Telegram,电报消息
+  - RULE-SET,Steam,游戏平台
+  - RULE-SET,Epic,游戏平台
+  - RULE-SET,Emby,Emby
+  - RULE-SET,Bahamut,国际媒体
+  - RULE-SET,Netflix,国际媒体
+  - RULE-SET,Disney,国际媒体
+  - RULE-SET,PrimeVideo,国际媒体
+  - RULE-SET,HBO,国际媒体
+  - RULE-SET,TikTok,国际媒体
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Proxy,国外网站
+  - RULE-SET,AppleCN,DIRECT
+  - RULE-SET,AppleProxy,香港节点
   - RULE-SET,Lan,DIRECT
-  - RULE-SET,TencentVideo,DIRECT
-
-  - RULE-SET,OpenAI,💬 OpenAI
-  - RULE-SET,ByteDance,💬 OpenAI
-  - RULE-SET,BingAI,💬 OpenAI
-  - RULE-SET,BardAI,💬 OpenAI
-  - RULE-SET,Gemini,💬 OpenAI
-  - RULE-SET,Advertising,🆎 AdBlock
-  - RULE-SET,Cloudflare,🤖 Cloudflare
-  - RULE-SET,Apple,🍎 苹果服务
-  - RULE-SET,Github,👨🏻💻 GitHub
-  - RULE-SET,Microsoft,Ⓜ️ 微软服务
-  - RULE-SET,Google,🌌 谷歌服务
-  - RULE-SET,Telegram,📟 国外社交
-  - RULE-SET,Discord,📟 国外社交
-  - RULE-SET,Twitter,📟 国外社交
-  - RULE-SET,Instagram,📟 国外社交
-  - RULE-SET,YouTube,🎥 国外视频
-  - RULE-SET,Netflix,🎥 国外视频
-  - RULE-SET,Proxy,🐟 漏网之鱼
-  - RULE-SET,China,DIRECT
   - GEOIP,CN,DIRECT
-  - MATCH,🐟 漏网之鱼
+  - MATCH,兜底分流
