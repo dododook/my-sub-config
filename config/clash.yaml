@@ -36,6 +36,7 @@ dns:
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter: ['+.lan', '*', '+.local', '+.cmpassport.com', 'id6.me', 'open.e.189.cn', 'mdn.open.wo.cn', 'opencloud.wostore.cn', 'auth.wosms.cn', '+.10099.com.cn', '+.msftconnecttest.com', '+.msftncsi.com', 'lancache.steamcontent.com']
   nameserver: [223.5.5.5, 119.29.29.29]
+  nameserver-policy:
 __DNS_POLICY__
 
 # ---------------------------------------------------
@@ -109,10 +110,11 @@ rule-providers:
 # 路由规则
 # ---------------------------------------------------
 rules:
-  # 解决规则下载死锁
+  # 解决规则下载死锁与后端加速
   - DOMAIN-SUFFIX,github.com,DIRECT
   - DOMAIN-SUFFIX,githubusercontent.com,DIRECT
   - DOMAIN-SUFFIX,repcz.link,DIRECT
+  - DOMAIN-KEYWORD,github,DIRECT
   
   - RULE-SET,Direct,DIRECT
   - RULE-SET,Reject,REJECT
