@@ -1,11 +1,11 @@
 # Author: https://github.com/Repcz
 # 适配版 - 供 Cloudflare Worker 转换器使用
-# 最后更新时间: 2026-4-27 17:40
+# 最后更新时间: 2026-05-12
 
 # ---------------------------------------------------
 # 基础设置
 # ---------------------------------------------------
-mixed-port: 7893
+mixed-port: 7890  # 改回通用端口
 tcp-concurrent: true
 allow-lan: true
 ipv6: false
@@ -46,7 +46,7 @@ proxies:
 __PROXIES__
 
 # ---------------------------------------------------
-# 锚点定义
+# 锚点参数
 # ---------------------------------------------------
 pg: &pg {type: select, proxies: [手动切换, 香港节点, 美国节点, 狮城节点, 日本节点, 台湾节点, DIRECT]}
 url-test: &url-test {type: url-test, url: http://1.1.1.1/generate_204, interval: 300, tolerance: 0, include-all: true}
@@ -70,7 +70,6 @@ proxy-groups:
   - {name: Spotify, <<: *pg, include-all: true, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Spotify.png}
   - {name: 兜底分流, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png}
   
-  # 自动选择组
   - {name: 香港节点, <<: *url-test, filter: "(?i)🇭🇰|香港|(\b(HK|Hong)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png}
   - {name: 美国节点, <<: *url-test, filter: "(?i)🇺🇸|美国|洛杉矶|圣何塞|(\b(US|United States)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png}
   - {name: 狮城节点, <<: *url-test, filter: "(?i)🇸🇬|新加坡|狮|(\b(SG|Singapore)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png}
@@ -110,11 +109,10 @@ rule-providers:
 # 路由规则
 # ---------------------------------------------------
 rules:
-  # 解决规则下载死锁与后端加速
+  # 保障规则
   - DOMAIN-SUFFIX,github.com,DIRECT
   - DOMAIN-SUFFIX,githubusercontent.com,DIRECT
   - DOMAIN-SUFFIX,repcz.link,DIRECT
-  - DOMAIN-KEYWORD,github,DIRECT
   
   - RULE-SET,Direct,DIRECT
   - RULE-SET,Reject,REJECT
