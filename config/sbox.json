@@ -18,7 +18,7 @@
     },
     "cache_file": {
       "enabled": true,
-      "path": "cache.db","388222.xyz
+      "path": "cache.db",
       "cache_id": "",
       "store_fakeip": false,
       "rdrc_timeout": "7d"
@@ -43,14 +43,7 @@
       "auto_route": true,
       "strict_route": true,
       "endpoint_independent_nat": false,
-      "stack": "system",
-      "platform": {
-        "http_proxy": {
-          "enabled": true,
-          "server": "127.0.0.1",
-          "server_port": 20122
-        }
-      }
+      "stack": "system"
     }
   ],
   "outbounds": [
@@ -78,6 +71,7 @@
   ],
   "route": {
     "rules": [
+      { "domain_suffix": ["388222.xyz", "cloudflare.com"], "outbound": "🎯 全球直连" },
       { "action": "sniff", "inbound": "tun-in" },
       { "action": "hijack-dns", "protocol": "dns" },
       { "action": "reject", "rule_set": ["Category-Ads"] },
@@ -140,6 +134,7 @@
       { "tag": "Remote-DNS-Resolver", "type": "udp", "detour": "🚀 节点选择", "server_port": 53, "server": "8.8.8.8" }
     ],
     "rules": [
+      { "domain_suffix": ["388222.xyz", "cloudflare.com"], "action": "route", "server": "Local-DNS" },
       { "action": "route", "clash_mode": "direct", "server": "Local-DNS" },
       { "action": "route", "clash_mode": "global", "server": "Remote-DNS" },
       { "action": "route", "rule_set": ["GeoLocation-CN", "GeoSite-CN"], "server": "Local-DNS" },
