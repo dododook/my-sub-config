@@ -1,14 +1,16 @@
 # Author: https://github.com/Repcz
 # 适配版 - 供 Cloudflare Worker 转换器使用
-# 已优化：全面开启 IPv6 支持及解析
+# 已开启：IPv6 支持、Clash API 面板控制
 
 # ---------------------------------------------------
 # 基础设置
 # ---------------------------------------------------
 mixed-port: 7890
+external-controller: 127.0.0.1:9090
+secret: "40cf80546ed45fb9fc0a15fe0bcf3807ad0b4bb6453e25e784ee449cc4789ff4"
 tcp-concurrent: true
 allow-lan: true
-ipv6: true  # 已开启
+ipv6: true
 log-level: info
 unified-delay: true
 geodata-mode: true
@@ -26,11 +28,12 @@ sniffer: { enable: true, sniff: { HTTP: { ports: [80], override-destination: tru
 tun:
   enable: true
   stack: mixed
-  dns-hijack: [any:53]
+  dns-hijack:
+    - "any:53"
         
 dns:
   enable: true
-  ipv6: true  # 已开启
+  ipv6: true
   enhanced-mode: fake-ip
   listen: :1053
   fake-ip-range: 198.18.0.1/16
@@ -71,7 +74,7 @@ proxy-groups:
   - {name: 兜底分流, <<: *pg, icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png}
   
   - {name: 香港节点, <<: *url-test, filter: "(?i)🇭🇰|香港|(\b(HK|Hong)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png}
-  - {name: 美国节点, <<: *url-test, filter: "(?i)🇺🇸|美国|洛杉矶|圣何塞|(\b(US|United States)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png}
+  - {name: 美国节点, <<: *url-test, filter: "(?i)🇺🇸|美国|洛杉矶|圣好塞|(\b(US|United States)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png}
   - {name: 狮城节点, <<: *url-test, filter: "(?i)🇸🇬|新加坡|狮|(\b(SG|Singapore)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Singapore.png}
   - {name: 日本节点, <<: *url-test, filter: "(?i)🇯🇵|日本|东京|(\b(JP|Japan)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png}
   - {name: 台湾节点, <<: *url-test, filter: "(?i)🇨🇳|🇹🇼|台湾|(\b(TW|Tai|Taiwan)\b)", icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/China.png}
@@ -109,11 +112,9 @@ rule-providers:
 # 路由规则
 # ---------------------------------------------------
 rules:
-  # 保障规则
   - DOMAIN-SUFFIX,github.com,DIRECT
   - DOMAIN-SUFFIX,githubusercontent.com,DIRECT
   - DOMAIN-SUFFIX,repcz.link,DIRECT
-  
   - RULE-SET,Direct,DIRECT
   - RULE-SET,Reject,REJECT
   - RULE-SET,AI,AI
