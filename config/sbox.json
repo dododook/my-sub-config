@@ -43,154 +43,40 @@
       "auto_route": true,
       "strict_route": true,
       "endpoint_independent_nat": false,
-      "stack": "system",
-      "platform": {
-        "http_proxy": {
-          "enabled": true,
-          "server": "127.0.0.1",
-          "server_port": 20122
-        }
-      }
+      "stack": "system"
     }
   ],
   "outbounds": [
-    {
-      "type": "selector",
-      "tag": "🚀 节点选择",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🇭🇰 香港",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🇹🇼 台湾",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🇸🇬 新加坡",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🇯🇵 日本",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🇺🇸 美国",
-      "interrupt_exist_connections": true,
-      "outbounds": []
-    },
-    {
-      "type": "selector",
-      "tag": "🔍 Bing",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🎯 全球直连", "🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "🌐 Google",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "▶️ YouTube",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "📺 Netflix",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "📹 Disney+",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "🎥 bilibili",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国", "🎯 全球直连"]
-    },
-    {
-      "type": "selector",
-      "tag": "🎬 TikTok",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "💬 X",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "🧑🤝🧑 FaceBook",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "✈️ Telegram",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "🤖 AI",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"]
-    },
-    {
-      "type": "selector",
-      "tag": "📦 Github",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国", "🎯 全球直连"]
-    },
-    {
-      "type": "direct",
-      "tag": "🎯 全球直连"
-    },
-    {
-      "type": "selector",
-      "tag": "🐟 漏网之鱼",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🎯 全球直连"]
-    },
-    {
-      "type": "selector",
-      "tag": "GLOBAL",
-      "interrupt_exist_connections": true,
-      "outbounds": ["🚀 节点选择", "🎯 全球直连", "🐟 漏网之鱼"]
-    }
+    { "type": "selector", "tag": "🚀 节点选择", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🇭🇰 香港", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🇹🇼 台湾", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🇸🇬 新加坡", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🇯🇵 日本", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🇺🇸 美国", "interrupt_exist_connections": true, "outbounds": [] },
+    { "type": "selector", "tag": "🔍 Bing", "interrupt_exist_connections": true, "outbounds": ["🎯 全球直连", "🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "🌐 Google", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "▶️ YouTube", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "📺 Netflix", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "📹 Disney+", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "🎥 bilibili", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国", "🎯 全球直连"] },
+    { "type": "selector", "tag": "🎬 TikTok", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "💬 X", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "🧑🤝🧑 FaceBook", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "✈️ Telegram", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "🤖 AI", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国"] },
+    { "type": "selector", "tag": "📦 Github", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🇭🇰 香港", "🇹🇼 台湾", "🇸🇬 新加坡", "🇯🇵 日本", "🇺🇸 美国", "🎯 全球直连"] },
+    { "type": "direct", "tag": "🎯 全球直连" },
+    { "type": "selector", "tag": "🐟 漏网之鱼", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🎯 全球直连"] },
+    { "type": "selector", "tag": "GLOBAL", "interrupt_exist_connections": true, "outbounds": ["🚀 节点选择", "🎯 全球直连", "🐟 漏网之鱼"] }
   ],
   "route": {
     "rules": [
-      {
-        "domain_suffix": ["388222.xyz", "cloudflare.com"],
-        "outbound": "🎯 全球直连"
-      },
+      { "domain_suffix": ["388222.xyz", "cloudflare.com"], "outbound": "🎯 全球直连" },
       { "action": "sniff", "inbound": "tun-in" },
       { "action": "hijack-dns", "protocol": "dns" },
       { "action": "reject", "rule_set": ["Category-Ads"] },
       { "action": "reject", "protocol": "quic" },
-      { "action": "route", "rule_set": ["GeoSite-Private"], "outbound": "🎯 全球直连" },
-      { "action": "route", "rule_set": ["GeoIP-Private"], "outbound": "🎯 全球直连" },
+      { "action": "route", "rule_set": ["GeoSite-Private", "GeoIP-Private"], "outbound": "🎯 全球直连" },
       { "action": "route", "clash_mode": "direct", "outbound": "🎯 全球直连" },
       { "action": "route", "clash_mode": "global", "outbound": "GLOBAL" },
       { "action": "route", "rule_set": ["Github"], "outbound": "📦 Github" },
