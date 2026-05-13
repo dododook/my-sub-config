@@ -1,14 +1,14 @@
 # Author: https://github.com/Repcz
 # 适配版 - 供 Cloudflare Worker 转换器使用
-# 最后更新时间: 2026-05-12
+# 已优化：全面开启 IPv6 支持及解析
 
 # ---------------------------------------------------
 # 基础设置
 # ---------------------------------------------------
-mixed-port: 7890  # 改回通用端口
+mixed-port: 7890
 tcp-concurrent: true
 allow-lan: true
-ipv6: true
+ipv6: true  # 已开启
 log-level: info
 unified-delay: true
 geodata-mode: true
@@ -30,7 +30,7 @@ tun:
         
 dns:
   enable: true
-  ipv6: false
+  ipv6: true  # 已开启
   enhanced-mode: fake-ip
   listen: :1053
   fake-ip-range: 198.18.0.1/16
