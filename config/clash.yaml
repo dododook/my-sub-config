@@ -8,6 +8,10 @@
 mixed-port: 7890
 external-controller: 127.0.0.1:9090
 secret: "40cf80546ed45fb9fc0a15fe0bcf3807ad0b4bb6453e25e784ee449cc4789ff4"
+# 新增 Zashboard 面板配置
+external-ui: ui
+external-ui-name: zashboard
+external-ui-url: "https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
 tcp-concurrent: true
 allow-lan: true
 ipv6: true
