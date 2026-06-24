@@ -127,6 +127,17 @@
                 "http://dash.sing-box.app"
             ],
             "access_control_allow_private_network": true
+        },
+        {
+            "type": "api",
+            "tag": "carton clash api",
+            "listen": "127.0.0.1",
+            "listen_port": 9090,
+            "secret": "",
+            "access_control_allow_origin": [
+                "*"
+            ],
+            "access_control_allow_private_network": true
         }
     ],
     "inbounds": [
